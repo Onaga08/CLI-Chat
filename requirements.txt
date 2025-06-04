@@ -4,3 +4,4 @@ python-dotenv
 websockets
 rich 
 prompt_toolkit
+ruff
