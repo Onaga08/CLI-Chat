@@ -1,7 +1,6 @@
 # main.py — FastAPI WebSocket chat server (with global broadcast and ping)
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
-from fastapi.responses import HTMLResponse
 from typing import Dict
 from dotenv import load_dotenv
 import os

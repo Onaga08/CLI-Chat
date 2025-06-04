@@ -4,14 +4,9 @@ import asyncio
 import websockets
 import argparse
 import json
-import sys
 import os
 from prompt_toolkit import PromptSession
-from rich import print
 from rich.console import Console
-from rich.markdown import Markdown
-from rich.panel import Panel
-from rich.text import Text
 
 SERVER_URL = os.getenv("CHAT_SERVER_URL", "wss://chat-server-l047.onrender.com/ws")
 
@@ -82,7 +77,7 @@ async def keep_alive(ws):
         try:
             await asyncio.sleep(30)
             await ws.send(json.dumps({"type": "ping"}))
-        except:
+        except Exception:
             break
 
 async def receive_loop(ws):
