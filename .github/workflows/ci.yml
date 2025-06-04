@@ -26,7 +26,7 @@ jobs:
 
       - name: Lint code with ruff
         run: |
-          ruff .
+          ruff check .
 
       - name: Trigger Render deploy if main.py changed
         if: contains(github.event.head_commit.message, 'main.py') || contains(join(github.event.commits.*.modified, ','), 'main.py')
