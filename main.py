@@ -1,4 +1,4 @@
-# main.py — FastAPI WebSocket chat server (for Render deployment)
+# main.py — FastAPI WebSocket chat server (with global broadcast and ping)
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
 from fastapi.responses import HTMLResponse
@@ -55,6 +55,16 @@ async def websocket_endpoint(websocket: WebSocket, nickname: str = Query(...), t
                     "users": list(connected_users.keys())
                 })
 
+            elif msg_type == "ping":
+                await websocket.send_json({
+                    "type": "pong",
+                    "message": "alive"
+                })
+
+            elif msg_type == "global":
+                message = data.get("message")
+                await broadcast_global(nickname, message)
+
     except WebSocketDisconnect:
         connected_users.pop(nickname, None)
         await broadcast_system(f"{nickname} left the chat")
@@ -64,6 +74,14 @@ async def broadcast_system(message: str):
     for ws in connected_users.values():
         await ws.send_json({
             "type": "system",
+            "message": message
+        })
+
+async def broadcast_global(sender: str, message: str):
+    for ws in connected_users.values():
+        await ws.send_json({
+            "type": "global",
+            "from": sender,
             "message": message
         })
 
