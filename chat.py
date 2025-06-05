@@ -1,13 +1,12 @@
-# chat.py — Python CLI client using prompt_toolkit and rich for a responsive and styled experience
-
 import asyncio
 import websockets
-import argparse
 import json
 import os
 from prompt_toolkit import PromptSession
+from prompt_toolkit.formatted_text import ANSI
 from rich.console import Console
 
+# Server URL (can be overridden with environment variable)
 SERVER_URL = os.getenv("CHAT_SERVER_URL", "wss://chat-server-l047.onrender.com/ws")
 
 exit_event = asyncio.Event()
@@ -24,10 +23,10 @@ async def send_loop(ws, nickname):
     console.print("  [cyan]clear[/cyan]")
     console.print("  [cyan]leave[/cyan]")
     console.print("  [cyan]help[/cyan]")
+
     while not exit_event.is_set():
         try:
-            console.print("[bold red]/chat> [/bold red]", end="", highlight=False)
-            command = await session.prompt_async()
+            command = await session.prompt_async(ANSI("\x1b[1;31m/chat> \x1b[0m"))
             command = command.strip()
             if command == "list":
                 await ws.send(json.dumps({"type": "get-users"}))
@@ -95,7 +94,7 @@ async def receive_loop(ws):
             elif data["type"] == "error":
                 console.print(f"\n[red][error][/red] {data['message']}")
             elif data["type"] == "pong":
-                pass  # hidden
+                pass  # keep-alive hidden
     except websockets.ConnectionClosed:
         console.print("\n[red]Disconnected from server.[/red]")
         exit_event.set()
@@ -115,9 +114,7 @@ async def main(nickname, token):
         exit_event.set()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--nickname", required=True, help="Your chat nickname")
-    parser.add_argument("--token", required=True, help="Auth token")
-    args = parser.parse_args()
-
-    asyncio.run(main(args.nickname, args.token))
+    session = PromptSession()
+    nickname = asyncio.run(session.prompt_async(ANSI("\x1b[1;36mEnter your nickname: \x1b[0m")))
+    token = asyncio.run(session.prompt_async(ANSI("\x1b[1;36mEnter your token: \x1b[0m")))
+    asyncio.run(main(nickname, token))
