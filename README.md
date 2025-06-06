@@ -1,5 +1,7 @@
 # 🦉 CLI-Chat
 
+![CLI-Chat Logo](assets/logo.png)
+
 A minimalist, real-time chat client that lives in your terminal — because not everything needs to be a web app.
 
 Built in Python. Runs over WebSockets. Talks like a wise owl.
@@ -73,6 +75,10 @@ Because sometimes, a quiet terminal is all you need.
 No bloat. No distractions. Just you and some text-based wisdom.
 
 ---
+
+## A Short working example
+
+![CLI-Chat Working GIC](assets/example.gif)
 
 ## 🦉 Author
 
