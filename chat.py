@@ -99,7 +99,38 @@ async def receive_loop(ws):
         console.print("\n[red]Disconnected from server.[/red]")
         exit_event.set()
 
-async def main(nickname, token):
+# async def main(nickname, token):
+#     uri = f"{SERVER_URL}?nickname={nickname}&token={token}"
+#     try:
+#         async with websockets.connect(uri) as ws:
+#             console.print(f"[bold green]Connected as '{nickname}'[/bold green]")
+#             await asyncio.gather(
+#                 send_loop(ws, nickname),
+#                 receive_loop(ws),
+#                 keep_alive(ws)
+#             )
+#     except Exception as e:
+#         console.print(f"[red]Failed to connect:[/] {e}")
+#         exit_event.set()
+
+# if __name__ == "__main__":
+#     session = PromptSession()
+#     nickname = asyncio.run(session.prompt_async(ANSI("\x1b[1;36mEnter your nickname: \x1b[0m")))
+#     token = asyncio.run(session.prompt_async(ANSI("\x1b[1;36mEnter your token: \x1b[0m")))
+#     asyncio.run(main(nickname, token))
+
+def main():
+    session = PromptSession()
+    nickname = asyncio.run(session.prompt_async(ANSI("\x1b[1;36mEnter your nickname: \x1b[0m")))
+    token = asyncio.run(session.prompt_async(ANSI("\x1b[1;36mEnter your token: \x1b[0m")))
+    asyncio.run(start_chat(nickname, token))
+
+
+async def start_chat(nickname, token):
+    await main_chat(nickname, token)
+
+
+async def main_chat(nickname, token):
     uri = f"{SERVER_URL}?nickname={nickname}&token={token}"
     try:
         async with websockets.connect(uri) as ws:
@@ -113,8 +144,6 @@ async def main(nickname, token):
         console.print(f"[red]Failed to connect:[/] {e}")
         exit_event.set()
 
+
 if __name__ == "__main__":
-    session = PromptSession()
-    nickname = asyncio.run(session.prompt_async(ANSI("\x1b[1;36mEnter your nickname: \x1b[0m")))
-    token = asyncio.run(session.prompt_async(ANSI("\x1b[1;36mEnter your token: \x1b[0m")))
-    asyncio.run(main(nickname, token))
+    main()
